@@ -26,3 +26,8 @@
 *.exe
 *.out
 *.app
+
+a.out
+build/*
+VEX/pub/libvex_guest_offsets.h
+

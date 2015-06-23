@@ -9,9 +9,10 @@ CFLAGS ?=
 
 VEX_BUILD_DIR ?= $(PWD)/build
 VEX_SRC_DIR ?= $(PWD)/VEX
+VEX_INC_DIR ?= $(PWD)/VEX/pub
 VEX_INSTALL_DIR ?= /usr/local
 
-VEX_SRC_FILES := $(wildcard $(VEX_SRC_DIR)/priv/*.c) $(wildcard $(VEX_SRC_DIR)/auxprogs/*.c)
+VEX_SRC_FILES := $(wildcard $(VEX_SRC_DIR)/priv/*.c)
 VEX_OBJ_FILES := $(addsuffix .o, $(subst $(VEX_SRC_DIR),$(VEX_BUILD_DIR),$(VEX_SRC_FILES)))
 
 ifeq ($(UNAME),Darwin) # Mac OS X
@@ -35,16 +36,21 @@ $(VEX_BUILD_DIR)/libvex.$(VEX_LIB_EXT): $(VEX_OBJ_FILES)
 	@mkdir -p $(@D)
 	@$(CC) $(LDFLAGS) -o $@ $^
 
+$(VEX_INC_DIR)/libvex_guest_offsets.h:
+	@$(CC) $(VEX_SRC_DIR)/auxprogs/genoffsets.c
+	@$(PWD)/a.out > $@
+	@rm $(PWD)/a.out
+
 clean:
 	@rm -rf $(VEX_BUILD_DIR)
 	@echo Cleaned
 
-all: $(VEX_BUILD_DIR)/libvex.so
+all: $(VEX_BUILD_DIR)/libvex.so $(VEX_INC_DIR)/libvex_guest_offsets.h
 	@echo Compiled
 
-install: all
+install: all 
 	@mkdir -p $(VEX_INSTALL_DIR)/lib
 	@mkdir -p $(VEX_INSTALL_DIR)/include
 	@cp $(VEX_BUILD_DIR)/libvex.$(VEX_LIB_EXT) $(VEX_INSTALL_DIR)/lib
-	@cp -r $(VEX_SRC_DIR)/pub $(VEX_INSTALL_DIR)/include/vex
+	@cp -r $(VEX_INC_DIR) $(VEX_INSTALL_DIR)/include/vex
 	@echo Installed

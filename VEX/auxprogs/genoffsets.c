@@ -56,32 +56,12 @@
 #include "../pub/libvex_guest_mips32.h"
 #include "../pub/libvex_guest_mips64.h"
 
-#define VG_STRINGIFZ(__str)  #__str
-#define VG_STRINGIFY(__str)  VG_STRINGIFZ(__str)
 
-#define my_offsetof(__type,__field) (&((__type*)0)->__field)
-
-/* This forces gcc to evaluate the my_offsetof call at compile time,
-   and then emits it in the assembly, along with the nonsense string
-   "xyzzy", for easy greppability.  Once this file is compiled to
-   assembly, the lines containing "xyzzy" are grepped out and sed-ed
-   to produce the final result.  See the Makefile rule for
-   pub/libvex_guest_offsets.h. */
 #define GENOFFSET(_structUppercase,_structLowercase,_fieldname)  \
-   __asm__ __volatile__ ( \
-      "\n#define OFFSET_" \
-      VG_STRINGIFY(_structLowercase) "_" \
-      VG_STRINGIFY(_fieldname) \
-      " xyzzy%0\n" : /*out*/ \
-                   : /*in*/ "n" \
-         (my_offsetof(VexGuest##_structUppercase##State, \
-          guest_##_fieldname)) \
-   )
+  printf("#define OFFSET_" #_structLowercase "_" #_fieldname " %lu\n", \
+         __builtin_offsetof(VexGuest##_structUppercase##State, guest_##_fieldname))
 
-void foo ( void );
-__attribute__((noinline))
-void foo ( void )
-{
+int main(void) {
    // x86
    GENOFFSET(X86,x86,EAX);
    GENOFFSET(X86,x86,EBX);
@@ -263,6 +243,8 @@ void foo ( void )
    GENOFFSET(MIPS64,mips64,PC);
    GENOFFSET(MIPS64,mips64,HI);
    GENOFFSET(MIPS64,mips64,LO);
+
+   return 0;
 }
 
 /*--------------------------------------------------------------------*/
