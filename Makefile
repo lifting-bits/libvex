@@ -52,5 +52,6 @@ install: all
 	@mkdir -p $(VEX_INSTALL_DIR)/lib
 	@mkdir -p $(VEX_INSTALL_DIR)/include
 	@cp $(VEX_BUILD_DIR)/libvex.$(VEX_LIB_EXT) $(VEX_INSTALL_DIR)/lib
+	@rm -rf $(VEX_INSTALL_DIR)/include/vex
 	@cp -r $(VEX_INC_DIR) $(VEX_INSTALL_DIR)/include/vex
 	@echo Installed
