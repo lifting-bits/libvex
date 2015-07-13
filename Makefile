@@ -16,7 +16,7 @@ VEX_SRC_FILES := $(wildcard $(VEX_SRC_DIR)/priv/*.c)
 VEX_OBJ_FILES := $(addsuffix .o, $(subst $(VEX_SRC_DIR),$(VEX_BUILD_DIR),$(VEX_SRC_FILES)))
 
 ifeq ($(UNAME),Darwin) # Mac OS X
-	VEX_LIB_EXT = dylib
+	VEX_LIB_EXT = so
 	LDFLAGS += -dynamiclib
 else
 	VEX_LIB_EXT = so
@@ -45,7 +45,7 @@ clean:
 	@rm -rf $(VEX_BUILD_DIR)
 	@echo Cleaned
 
-all: $(VEX_BUILD_DIR)/libvex.so $(VEX_INC_DIR)/libvex_guest_offsets.h
+all: $(VEX_BUILD_DIR)/libvex.$(VEX_LIB_EXT) $(VEX_INC_DIR)/libvex_guest_offsets.h
 	@echo Compiled
 
 install: all 
