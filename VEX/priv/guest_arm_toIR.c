@@ -17600,6 +17600,7 @@ DisResult disInstr_THUMB_WRK (
       also possibly guarded.  Hence if 'label:' is the start of a hot
       loop we will get a big performance hit.
    */
+#if 0
    {
       /* Summary result of this analysis: False == safe but
          suboptimal. */
@@ -17648,6 +17649,7 @@ DisResult disInstr_THUMB_WRK (
          }
       }
    }
+#endif 
    /* --- END ITxxx optimisation analysis --- */
 
    /* Generate the guarding condition for this insn, by examining
